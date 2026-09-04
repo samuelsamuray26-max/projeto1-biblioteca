@@ -105,6 +105,15 @@ tr:last-child td {
   border-bottom: none;
 }
 
+.emprestimo-devolvido {
+  background: rgba(148, 163, 184, 0.12);
+  opacity: 0.78;
+}
+
+.emprestimo-devolvido td {
+  color: #475569;
+}
+
 button {
   background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: #fff;

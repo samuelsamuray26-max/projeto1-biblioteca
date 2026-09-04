@@ -13,7 +13,11 @@ export default function Emprestimos() {
 
   async function carregar() {
     const dados = await get('/emprestimos')
-    setEmprestimos(dados)
+    const ordenados = [...dados].sort((a, b) => {
+      if (a.status === b.status) return 0
+      return a.status === 'ATIVO' ? -1 : 1
+    })
+    setEmprestimos(ordenados)
   }
 
   async function handleSubmit(e) {
@@ -69,7 +73,7 @@ export default function Emprestimos() {
         </thead>
         <tbody>
           {emprestimos.map((emp) => (
-            <tr key={emp.id}>
+            <tr key={emp.id} className={emp.status === 'DEVOLVIDO' ? 'emprestimo-devolvido' : ''}>
               <td>{emp.livroId}</td>
               <td>{emp.nomeUsuario}</td>
               <td>{emp.status}</td>
