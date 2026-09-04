@@ -11,6 +11,13 @@ export default function Emprestimos() {
     dataDevolucaoPrevista: ''
   })
 
+  function ordenarEmprestimos(lista) {
+    return [...lista].sort((a, b) => {
+      if (a.status === b.status) return 0
+      return a.status === 'ATIVO' ? -1 : 1
+    })
+  }
+
   useEffect(() => {
     const carregarDados = async () => {
       const [emprestimosData, livrosData] = await Promise.all([
@@ -18,7 +25,7 @@ export default function Emprestimos() {
         get('/livros')
       ])
 
-      setEmprestimos(emprestimosData)
+      setEmprestimos(ordenarEmprestimos(emprestimosData))
       setLivros(livrosData)
     }
 
@@ -27,11 +34,7 @@ export default function Emprestimos() {
 
   async function carregar() {
     const dados = await get('/emprestimos')
-    const ordenados = [...dados].sort((a, b) => {
-      if (a.status === b.status) return 0
-      return a.status === 'ATIVO' ? -1 : 1
-    })
-    setEmprestimos(ordenados)
+    setEmprestimos(ordenarEmprestimos(dados))
   }
 
   async function handleSubmit(e) {
@@ -110,7 +113,7 @@ export default function Emprestimos() {
           <tr><th>Livro</th><th>Usuario</th><th>Status</th><th>Previsao</th><th>Acoes</th></tr>
         </thead>
         <tbody>
-          {emprestimos.map((emp) => (
+          {ordenarEmprestimos(emprestimos).map((emp) => (
             <tr key={emp.id} className={emp.status === 'DEVOLVIDO' ? 'emprestimo-devolvido' : ''}>
               <td>{emp.livroId}</td>
               <td>{emp.nomeUsuario}</td>
