@@ -4,6 +4,7 @@ import { get, post, put } from '../services/api'
 export default function Emprestimos() {
   const [emprestimos, setEmprestimos] = useState([])
   const [livros, setLivros] = useState([])
+  const [erro, setErro] = useState('')
   const [form, setForm] = useState({
     livroId: '',
     nomeUsuario: '',
@@ -35,8 +36,18 @@ export default function Emprestimos() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    setErro('')
 
     if (!form.livroId || !form.nomeUsuario.trim() || !form.dataDevolucaoPrevista) {
+      setErro('Selecione livro, usuário e data de devolução.')
+      return
+    }
+
+    const hoje = new Date()
+    const dataSelecionada = new Date(`${form.dataDevolucaoPrevista}T00:00:00`)
+
+    if (dataSelecionada < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) {
+      setErro('A data de devolução deve ser igual ou posterior ao dia atual.')
       return
     }
 
@@ -83,10 +94,13 @@ export default function Emprestimos() {
           <label>Data de devolução prevista</label>
           <input
             type="date"
+            min={new Date().toISOString().split('T')[0]}
             value={form.dataDevolucaoPrevista}
             onChange={(e) => setForm({ ...form, dataDevolucaoPrevista: e.target.value })}
           />
         </div>
+
+        {erro && <p style={{ color: 'red', marginBottom: '16px' }}>{erro}</p>}
 
         <button type="submit">Emprestar</button>
       </form>
