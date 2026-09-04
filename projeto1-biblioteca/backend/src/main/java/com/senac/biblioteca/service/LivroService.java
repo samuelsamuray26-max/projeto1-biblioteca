@@ -2,7 +2,9 @@ package com.senac.biblioteca.service;
 
 import com.senac.biblioteca.model.Livro;
 import com.senac.biblioteca.repository.LivroRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,9 +22,8 @@ public class LivroService {
     }
 
     public Livro buscarPorId(Long id) {
-        // BUG: nao trata o caso de id inexistente, lanca NoSuchElementException
-        // sem tratamento, o Spring devolve 500 em vez de 404
-        return livroRepository.findById(id).get();
+        return livroRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado."));
     }
 
     public Livro salvar(Livro livro) {
@@ -45,8 +46,9 @@ public class LivroService {
 
     public void decrementarDisponibilidade(Long livroId) {
         Livro livro = buscarPorId(livroId);
-        // BUG: nao verifica se quantidadeDisponivel > 0 antes de decrementar,
-        // permitindo que o estoque de livros disponiveis fique negativo
+        if (livro.getQuantidadeDisponivel() == null || livro.getQuantidadeDisponivel() <= 0) {
+            throw new IllegalStateException("Livro indisponível para empréstimo.");
+        }
         livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() - 1);
         livroRepository.save(livro);
     }

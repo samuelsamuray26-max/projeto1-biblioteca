@@ -14,7 +14,11 @@ export default function ListaLivros() {
   }
 
   function excluir(id) {
-    // BUG: nao pede confirmacao antes de excluir
+    const confirmado = window.confirm('Deseja realmente excluir este livro?')
+    if (!confirmado) {
+      return
+    }
+
     del(`/livros/${id}`).then(carregar)
   }
 
@@ -32,9 +36,8 @@ export default function ListaLivros() {
           </tr>
         </thead>
         <tbody>
-          {livros.map((livro, index) => (
-            // BUG: key usando o indice do array em vez do id do livro
-            <tr key={index}>
+          {livros.map((livro) => (
+            <tr key={livro.id}>
               <td>{livro.titulo}</td>
               <td>{livro.autor}</td>
               <td>{livro.quantidadeDisponivel}</td>

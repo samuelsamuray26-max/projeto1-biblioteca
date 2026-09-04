@@ -8,7 +8,7 @@ cd backend
 docker compose up -d
 ```
 
-### Backend (Spring Boot + Gradle + Java 25)
+### Backend (Spring Boot + Gradle + Java 21)
 ```
 cd backend
 ./gradlew bootRun

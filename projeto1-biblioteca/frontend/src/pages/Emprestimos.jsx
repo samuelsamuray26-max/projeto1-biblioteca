@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { get, post } from '../services/api'
+import { get, post, put } from '../services/api'
 
 export default function Emprestimos() {
   const [emprestimos, setEmprestimos] = useState([])
@@ -11,21 +11,30 @@ export default function Emprestimos() {
     get('/livros').then(setLivros)
   }, [])
 
-  function carregar() {
-    get('/emprestimos').then(setEmprestimos)
+  async function carregar() {
+    const dados = await get('/emprestimos')
+    setEmprestimos(dados)
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    post('/emprestimos', form)
-    // BUG: nao espera a resposta (sem then/await) antes de recarregar a lista,
-    // entao o emprestimo recem-criado pode nao aparecer ainda
-    carregar()
+
+    if (!form.livroId || !form.nomeUsuario.trim()) {
+      return
+    }
+
+    await post('/emprestimos', {
+      ...form,
+      livroId: Number(form.livroId)
+    })
+
+    setForm({ livroId: '', nomeUsuario: '' })
+    await carregar()
   }
 
-  function devolver(id) {
-    // aponta pro endpoint de devolucao (que no backend esta como GET, veja o bug la)
-    fetch(`http://localhost:3000/api/emprestimos/${id}/devolver`).then(carregar)
+  async function devolver(id) {
+    await put(`/emprestimos/${id}/devolver`, {})
+    await carregar()
   }
 
   return (
