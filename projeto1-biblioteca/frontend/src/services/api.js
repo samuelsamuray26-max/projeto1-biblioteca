@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 export async function get(path) {
   const res = await fetch(`${BASE_URL}${path}`);
@@ -24,5 +24,7 @@ export async function put(path, body) {
 }
 
 export async function del(path) {
-  await fetch(`${BASE_URL}${path}`, { method: 'DELETE' });
+  await fetch(`${BASE_URL}${path}`, {
+    method: 'DELETE',
+  });
 }
