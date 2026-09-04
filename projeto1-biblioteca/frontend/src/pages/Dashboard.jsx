@@ -6,8 +6,13 @@ export default function Dashboard() {
   const [emprestimos, setEmprestimos] = useState([])
 
   useEffect(() => {
-    get('/livros').then(setLivros)
-    get('/emprestimos').then(setEmprestimos)
+    Promise.all([
+      get('/livros'),
+      get('/emprestimos')
+    ]).then(([livrosData, emprestimosData]) => {
+      setLivros(livrosData)
+      setEmprestimos(emprestimosData)
+    })
   }, [])
 
   const totalLivros = livros.length

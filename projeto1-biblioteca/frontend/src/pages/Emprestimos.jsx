@@ -7,8 +7,17 @@ export default function Emprestimos() {
   const [form, setForm] = useState({ livroId: '', nomeUsuario: '' })
 
   useEffect(() => {
-    carregar()
-    get('/livros').then(setLivros)
+    const carregarDados = async () => {
+      const [emprestimosData, livrosData] = await Promise.all([
+        get('/emprestimos'),
+        get('/livros')
+      ])
+
+      setEmprestimos(emprestimosData)
+      setLivros(livrosData)
+    }
+
+    carregarDados()
   }, [])
 
   async function carregar() {
