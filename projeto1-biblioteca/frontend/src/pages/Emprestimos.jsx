@@ -4,7 +4,11 @@ import { get, post, put } from '../services/api'
 export default function Emprestimos() {
   const [emprestimos, setEmprestimos] = useState([])
   const [livros, setLivros] = useState([])
-  const [form, setForm] = useState({ livroId: '', nomeUsuario: '' })
+  const [form, setForm] = useState({
+    livroId: '',
+    nomeUsuario: '',
+    dataDevolucaoPrevista: ''
+  })
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -32,16 +36,17 @@ export default function Emprestimos() {
   async function handleSubmit(e) {
     e.preventDefault()
 
-    if (!form.livroId || !form.nomeUsuario.trim()) {
+    if (!form.livroId || !form.nomeUsuario.trim() || !form.dataDevolucaoPrevista) {
       return
     }
 
     await post('/emprestimos', {
       ...form,
-      livroId: Number(form.livroId)
+      livroId: Number(form.livroId),
+      dataDevolucaoPrevista: form.dataDevolucaoPrevista
     })
 
-    setForm({ livroId: '', nomeUsuario: '' })
+    setForm({ livroId: '', nomeUsuario: '', dataDevolucaoPrevista: '' })
     await carregar()
   }
 
@@ -73,6 +78,16 @@ export default function Emprestimos() {
             onChange={(e) => setForm({ ...form, nomeUsuario: e.target.value })}
           />
         </div>
+
+        <div className="field">
+          <label>Data de devolução prevista</label>
+          <input
+            type="date"
+            value={form.dataDevolucaoPrevista}
+            onChange={(e) => setForm({ ...form, dataDevolucaoPrevista: e.target.value })}
+          />
+        </div>
+
         <button type="submit">Emprestar</button>
       </form>
 

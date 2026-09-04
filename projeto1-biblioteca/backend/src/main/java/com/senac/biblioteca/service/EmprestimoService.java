@@ -26,7 +26,11 @@ public class EmprestimoService {
 
     public Emprestimo emprestar(Emprestimo emprestimo) {
         emprestimo.setDataEmprestimo(LocalDate.now());
-        emprestimo.setDataDevolucaoPrevista(LocalDate.now().plusDays(7));
+
+        if (emprestimo.getDataDevolucaoPrevista() == null) {
+            emprestimo.setDataDevolucaoPrevista(LocalDate.now().plusDays(7));
+        }
+
         emprestimo.setStatus(StatusEmprestimo.ATIVO);
         livroService.decrementarDisponibilidade(emprestimo.getLivroId());
         return emprestimoRepository.save(emprestimo);
